@@ -23,13 +23,12 @@ addons:
 
 # configurations: cmake/autotools, in-tree/out-of-tree, release/debug, etc.
 env:
-  - CMAKE=no  BUILD_DIR=.      CONFIG_DIR=.                                COMMON_FLAGS="-O2 -g"
-  - CMAKE=no  BUILD_DIR=.build CONFIG_DIR=.. CONFIG_FLAGS="--enable-debug" COMMON_FLAGS="-O2 -g"
-  - CMAKE=yes BUILD_DIR=.      CONFIG_DIR=.  BUILD_TYPE=Debug              COMMON_FLAGS="-O2 -g"
-  - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Debug              COMMON_FLAGS="-O2 -g" SKELETON=yes
+  - CMAKE=no  BUILD_DIR=.      CONFIG_DIR=.  COMMON_FLAGS="-O2 -g"
+  - CMAKE=no  BUILD_DIR=.build CONFIG_DIR=.. COMMON_FLAGS="-O2 -g"
+  - CMAKE=yes BUILD_DIR=.      CONFIG_DIR=.  BUILD_TYPE=Debug
   - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Release
-  - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Debug              COMMON_FLAGS="-O2 -g -fsanitize=address"
-  - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Debug              COMMON_FLAGS="-O2 -g -fsanitize=undefined"
+  - CMAKE=yes BUILD_DIR=.      CONFIG_DIR=.  BUILD_TYPE=Asan
+  - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Ubsan
 
 script:
   - |
@@ -52,7 +51,6 @@ script:
     }
     function run_configure() {
         ${CONFIG_DIR}/configure \
-            ${CONFIG_FLAGS} \
             CFLAGS="${COMMON_FLAGS}" \
             CXXFLAGS="${COMMON_FLAGS}" \
             LDFLAGS="${COMMON_FLAGS}" \
