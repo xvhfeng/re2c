@@ -1,5 +1,9 @@
 language: cpp
 
+os:
+  - linux
+  - freebsd
+
 # use Ubuntu 20.04 (Focal Fossa) that defaults to Python 3
 dist: focal
 
@@ -29,6 +33,13 @@ env:
 
 script:
   - |
+    function ncpus() {
+        if [ "$TRAVIS_OS_NAME" = "freebsd" ]; then
+            sysctl -n hw.ncpu
+        else
+            nproc
+        fi
+    }
     function run_cmake() {
         cmake \
             -B . -S ${CONFIG_DIR} \
@@ -56,7 +67,7 @@ script:
         mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
         run_configure --prefix="$(pwd)/install"
     fi
-  - make -j$(nproc)
+  - make -j$(ncpus)
   - make install
   - |
     if [ x${CMAKE} = "xyes" ]; then
@@ -75,10 +86,7 @@ script:
             RE2C_FOR_BUILD="$(pwd)/install/bin/re2c"
     fi
   - find ${CONFIG_DIR}/src -name '*.re' | xargs touch
-  - make -j$(nproc)
+  - make -j$(ncpus)
   - |
-    if [ x${SKELETON} = "xyes" ]; then
-        ./run_tests.py --skeleton
-    else
-        make -j$(nproc) check VERBOSE=1
-    fi
+    make -j$(ncpus) check VERBOSE=1
+    ./run_tests.py --skeleton
