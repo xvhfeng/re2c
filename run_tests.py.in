@@ -12,7 +12,6 @@ import signal
 import subprocess
 import sys
 import textwrap as _textwrap
-from dataclasses import dataclass
 from datetime import datetime
 from functools import cmp_to_key
 from pathlib import Path
@@ -40,7 +39,6 @@ FILEPATH_CONTEXT_PATTERN = re.compile(b'('
     + b')')
 
 
-@dataclass
 class Context:
     """Class for passing a context to parallel processes."""
 
