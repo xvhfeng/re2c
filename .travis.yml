@@ -14,12 +14,9 @@ compiler:
   - gcc
   - clang
 
-# preinstalled packages
-addons:
-  apt:
-    packages:
-    - bison
-    - python3-docutils
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then apt install bison python3-docutils ; fi
+  - if [ "$TRAVIS_OS_NAME" = "freebsd" ]; then pkg install textproc/py-docutils; fi
 
 # configurations: cmake/autotools, in-tree/out-of-tree, release/debug, etc.
 env:
@@ -29,6 +26,13 @@ env:
   - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Release
   - CMAKE=yes BUILD_DIR=.      CONFIG_DIR=.  BUILD_TYPE=Asan
   - CMAKE=yes BUILD_DIR=.build CONFIG_DIR=.. BUILD_TYPE=Ubsan
+
+jobs:
+  exclude:
+  - os: freebsd
+    env: BUILD_TYPE=Asan
+  - os: freebsd
+    env: BUILD_TYPE=Ubsan
 
 script:
   - |
